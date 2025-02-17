@@ -6,14 +6,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Comparator;
-import java.util.PriorityQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
 
 class OrderBook {
-    private final PriorityQueue<Order> buyOrders = new PriorityQueue<>(Comparator.comparingDouble(Order::getPrice).reversed().thenComparingLong(Order::getTimestamp));
-    private final PriorityQueue<Order> sellOrders = new PriorityQueue<>(Comparator.comparingDouble(Order::getPrice).thenComparingLong(Order::getTimestamp));
+    private final PriorityBlockingQueue<Order> buyOrders = new PriorityBlockingQueue<>(100, Comparator.comparingDouble(Order::getPrice).reversed().thenComparingLong(Order::getTimestamp));
+    private final PriorityBlockingQueue<Order> sellOrders = new PriorityBlockingQueue<>(100, Comparator.comparingDouble(Order::getPrice).thenComparingLong(Order::getTimestamp));
     private final ReentrantLock lock = new ReentrantLock();
     private final ExecutorService executor = Executors.newFixedThreadPool(4);
     private final File logFile = new File("trade_log.txt");
