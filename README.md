@@ -85,7 +85,7 @@ CompletableFuture.supplyAsync(() -> fetchMarketData("AAPL"))
 ## High Level architecture
 
 * Market Data Handler → Uses ConcurrentHashMap for real-time stock prices.
-* Order Matching Engine → Uses PriorityQueue and TreeMap for efficient order processing.
+* Order Matching Engine → Uses PriorityBlockingQueue and TreeMap for efficient order processing.
 * Risk Management Module → Uses AtomicInteger and CompletableFuture for fast risk calculations.
 * Trade Execution Module → Uses ExecutorService for concurrent execution of trade orders.
 
