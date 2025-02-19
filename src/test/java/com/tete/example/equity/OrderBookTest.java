@@ -29,9 +29,11 @@ class OrderBookTest {
 
     @AfterEach
     void cleanUp() {
+    	// Clean up log file after tests
         logFile.delete();
     }
 
+    // Test matching of a buy and sell order at the same price
     @Test
     void testOrderMatching() throws IOException {
         orderBook.placeOrder(new Order("AAPL", 100, 185.50, Order.Type.BUY));
@@ -46,6 +48,7 @@ class OrderBookTest {
         
     }
 
+    // Test partial order fulfilment when buy quantity > sell quantity
 	@Test
     void testPartialFill() throws IOException {
         orderBook.placeOrder(new Order("AAPL", 150, 185.50, Order.Type.BUY));
@@ -59,6 +62,7 @@ class OrderBookTest {
         assertTrue(lines.get(0).contains("100 shares AAPL @ 185.5"), "Partial trade should be logged");
     }
 	
+	// Test FIFO ordering
     @Test
     void testFIFOOrdering() throws IOException {
         orderBook.placeOrder(new Order("AAPL", 50, 185.50, Order.Type.BUY));
@@ -73,7 +77,7 @@ class OrderBookTest {
         assertTrue(lines.get(1).contains("50 shares AAPL @ 185.5"));
     }
 
-
+    // Test concurrency handling
     @Test
     void testConcurrencyHandling() throws IOException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(10);

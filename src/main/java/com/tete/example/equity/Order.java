@@ -1,5 +1,6 @@
 package com.tete.example.equity;
 
+//Order class representing a buy or sell order
 class Order {
     enum Type { BUY, SELL }
     
@@ -14,7 +15,7 @@ class Order {
         this.quantity = quantity;
         this.price = price;
         this.type = type;
-        this.timestamp = System.nanoTime();
+        this.timestamp = System.nanoTime(); // Use timestamp to maintain FIFO ordering
     }
     
     public double getPrice() { return price; }

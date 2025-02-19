@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
 
+//OrderBook class to manage buy and sell orders
 class OrderBook {
     private final PriorityBlockingQueue<Order> buyOrders = new PriorityBlockingQueue<>(100, Comparator.comparingDouble(Order::getPrice).reversed().thenComparingLong(Order::getTimestamp));
     private final PriorityBlockingQueue<Order> sellOrders = new PriorityBlockingQueue<>(100, Comparator.comparingDouble(Order::getPrice).thenComparingLong(Order::getTimestamp));
@@ -21,6 +22,8 @@ class OrderBook {
     public OrderBook() {
         try {
             if (!logFile.exists()) {
+            	
+            	// Ensure the log file exists
                 logFile.createNewFile();
             }
         } catch (IOException e) {
@@ -28,6 +31,7 @@ class OrderBook {
         }
     }
     
+    // Places a new order in the order book
     public void placeOrder(Order order) {
         executor.submit(() -> {
             lock.lock();
@@ -37,6 +41,7 @@ class OrderBook {
                 } else {
                     sellOrders.offer(order);
                 }
+                // Attempt to match orders after placing a new order
                 matchOrders();
             } finally {
                 lock.unlock();
@@ -44,6 +49,7 @@ class OrderBook {
         });
     }
     
+    // Matches buy and sell orders based on price and FIFO rules
     private void matchOrders() {
         while (!buyOrders.isEmpty() && !sellOrders.isEmpty()) {
             Order buy = buyOrders.peek();
@@ -58,14 +64,18 @@ class OrderBook {
                 buy.reduceQuantity(matchedQuantity);
                 sell.reduceQuantity(matchedQuantity);
                 
+                // Remove fully matched buy order
                 if (buy.getQuantity() == 0) buyOrders.poll();
+                // Remove fully matched sell order
                 if (sell.getQuantity() == 0) sellOrders.poll();
             } else {
+            	// Stop matching if best buy price is lower than best sell price
                 break;
             }
         }
     }
     
+    // Logs matched trades to a file
     private void logTrade(String logEntry) {
         try (FileWriter fw = new FileWriter(logFile, true); BufferedWriter bw = new BufferedWriter(fw); PrintWriter out = new PrintWriter(bw)) {
             out.println(logEntry);

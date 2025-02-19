@@ -1,5 +1,5 @@
 
-# equity-swaps
+# Equity-swaps
 
 ## Data Structures
 
@@ -8,7 +8,7 @@
 Use case: Storing real-time price updates for stocks. Example:
 
 ```java
-Map<String, Double> stockPrices = new HashMap<>();
+Map<String, Double> stockPrices = new ConcurrentHashMap<>();
 stockPrices.put("AAPL", 185.75);
 ```
 
@@ -19,7 +19,7 @@ ConcurrentHashMap is a thread-safe alternative, useful for multi-threaded enviro
 Use case: Order book implementation (sorting buy/sell orders by price/time). Example:
 
 ```java
-PriorityQueue<Order> buyOrders = new PriorityQueue<>(Comparator.comparingDouble(Order::getPrice).reversed());
+PriorityBlockingQueue<Order> buyOrders = new PriorityBlockingQueue<>(Comparator.comparingDouble(Order::getPrice).reversed());
 buyOrders.add(new Order("AAPL", 100, 185.50));
 ```
 
